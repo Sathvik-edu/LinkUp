@@ -1,0 +1,64 @@
+{
+  "expo": {
+    "name": "LinkUp",
+    "slug": "linkup-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0ea5e9"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.linkup.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "LinkUp uses your location to show nearby friends and suggest meeting places.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "LinkUp uses your location to show nearby friends and suggest meeting places.",
+        "NSCameraUsageDescription": "LinkUp uses your camera to take photos for events and profile pictures.",
+        "NSPhotoLibraryUsageDescription": "LinkUp uses your photo library to select images for events and profile pictures."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0ea5e9"
+      },
+      "package": "com.linkup.app",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-location",
+      "expo-notifications",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id"
+      }
+    },
+    "owner": "linkup-team"
+  }
+} 
