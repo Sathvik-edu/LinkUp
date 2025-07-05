@@ -32,20 +32,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // If Supabase is not configured, skip auth setup
+    // If Supabase is not configured, skip auth setup and set user as null
     if (!supabase) {
+      console.warn('Supabase not configured - running in demo mode')
+      setUser(null)
+      setSession(null)
       setLoading(false)
       return
     }
 
     // Get initial session
     const getInitialSession = async () => {
+      if (!supabase) return
+      
       try {
         const { data: { session } } = await supabase.auth.getSession()
         setSession(session)
         setUser(session?.user ?? null)
       } catch (error) {
         console.error('Error getting session:', error)
+        setUser(null)
+        setSession(null)
       } finally {
         setLoading(false)
       }
@@ -54,15 +61,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     getInitialSession()
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session)
-        setUser(session?.user ?? null)
-        setLoading(false)
-      }
-    )
+    if (supabase) {
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          setSession(session)
+          setUser(session?.user ?? null)
+          setLoading(false)
+        }
+      )
 
-    return () => subscription.unsubscribe()
+      return () => subscription.unsubscribe()
+    }
   }, [])
 
   const signOut = async () => {

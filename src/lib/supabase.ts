@@ -1,28 +1,36 @@
 import { createClient } from '@supabase/supabase-js'
 import { Database } from '@/types/supabase'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder_key'
+// Check if environment variables are properly configured
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 // Only create client if we have valid environment variables
 const createSupabaseClient = () => {
-  if (supabaseUrl === 'https://placeholder.supabase.co' || supabaseAnonKey === 'placeholder_key') {
-    console.warn('Supabase environment variables not configured. Using placeholder client.')
+  if (!supabaseUrl || !supabaseAnonKey || 
+      supabaseUrl === 'your_supabase_project_url' || 
+      supabaseAnonKey === 'your_supabase_anon_key') {
+    console.warn('Supabase environment variables not configured. Authentication will be disabled.')
     return null
   }
   
-  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: true
-    },
-    realtime: {
-      params: {
-        eventsPerSecond: 10
+  try {
+    return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true
+      },
+      realtime: {
+        params: {
+          eventsPerSecond: 10
+        }
       }
-    }
-  })
+    })
+  } catch (error) {
+    console.error('Failed to create Supabase client:', error)
+    return null
+  }
 }
 
 export const supabase = createSupabaseClient()

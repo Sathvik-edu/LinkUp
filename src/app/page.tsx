@@ -3,15 +3,21 @@
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Avatar } from '@/components/ui/Avatar'
+import { Badge } from '@/components/ui/Badge'
+import { Modal } from '@/components/ui/Modal'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Modal } from '@/components/ui/Modal'
+import { useAuth } from '@/components/providers/AuthProvider'
 
 export default function HomePage() {
+  const { user, loading } = useAuth()
   const [isVideoPlaying, setIsVideoPlaying] = useState(false)
   const [activeSection, setActiveSection] = useState('hero')
   const [scrollY, setScrollY] = useState(0)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [demoMode, setDemoMode] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,6 +37,317 @@ export default function HomePage() {
     }
   }, [])
 
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  // If user is logged in or demo mode is enabled, show dashboard
+  if (user || demoMode) {
+    return (
+      <div className="overflow-hidden relative min-h-screen gradient-bg-secondary">
+        {/* Background Elements */}
+        <div className="overflow-hidden absolute inset-0">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full opacity-20 mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400 rounded-full opacity-20 mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+          <div className="absolute top-40 left-40 w-80 h-80 bg-pink-400 rounded-full opacity-20 mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+        </div>
+
+        {/* Navigation */}
+        <nav className="sticky top-0 z-50 border-b border-gray-200 backdrop-blur-md transition-all duration-300 bg-white/80">
+          <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <div className="flex items-center space-x-2 cursor-pointer group">
+                  <div className="flex justify-center items-center w-8 h-8 rounded-lg transition-transform duration-300 transform gradient-bg-primary group-hover:scale-110">
+                    <span className="text-sm font-bold text-white">L</span>
+                  </div>
+                  <h1 className="text-xl font-bold gradient-text">LinkUp</h1>
+                </div>
+              </div>
+              <div className="hidden items-center md:flex">
+                <div className="flex items-center space-x-8">
+                  <a href="/" className="relative text-gray-600 transition-colors hover:text-gray-900 group">
+                    Home
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
+                  </a>
+                </div>
+                
+                {/* Separator */}
+                <div className="mx-6 w-px h-6 bg-gray-300"></div>
+                
+                <div className="flex items-center space-x-8">
+                  <Link href="/dashboard/calendar" className="relative text-gray-600 transition-colors hover:text-gray-900 group">
+                    Calendar
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
+                  </Link>
+                  <Link href="/dashboard/polls" className="relative text-gray-600 transition-colors hover:text-gray-900 group">
+                    Polls
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
+                  </Link>
+                  <Link href="/dashboard/expenses" className="relative text-gray-600 transition-colors hover:text-gray-900 group">
+                    Expenses
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
+                  </Link>
+                  <Link href="/dashboard/location" className="relative text-gray-600 transition-colors hover:text-gray-900 group">
+                    Location
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
+                  </Link>
+                  <Link href="/dashboard/availability" className="relative text-gray-600 transition-colors hover:text-gray-900 group">
+                    Availability
+                    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
+                  </Link>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <Avatar name={user?.email || "Demo User"} size="md" />
+                <span className="text-sm font-medium text-gray-700">{user?.email || "Demo User"}</span>
+                {demoMode && (
+                  <button 
+                    onClick={() => setDemoMode(false)}
+                    className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    Exit Demo
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </nav>
+
+        {/* Hero Section */}
+        <section className="relative py-20 lg:py-32">
+          <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div className="space-y-8 text-center">
+              <div className="inline-flex items-center px-6 py-3 mb-8 text-sm font-medium text-blue-700 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full animate-pulse">
+                <span className="mr-3 w-3 h-3 bg-blue-500 rounded-full animate-ping"></span>
+                Welcome back to LinkUp
+              </div>
+              
+              <h1 className="text-5xl font-black leading-tight text-gray-900 md:text-7xl">
+                Your Social
+                <span className="block animate-pulse gradient-text">
+                  Command Center
+                </span>
+              </h1>
+              
+              <p className="mx-auto max-w-3xl text-xl leading-relaxed text-gray-600 md:text-2xl">
+                Welcome back! Here's what's happening with your events and friends.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Main Content */}
+        <main className="relative z-10 px-4 pb-20 mx-auto max-w-7xl sm:px-6 lg:px-8">
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 gap-6 mb-12 md:grid-cols-4">
+            <div className="transition-all duration-500 nike-card group hover:scale-105">
+              <div className="flex items-center">
+                <div className="p-3 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl transition-transform duration-300 group-hover:scale-110">
+                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Total Events</p>
+                  <p className="text-3xl font-black text-gray-900">12</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="transition-all duration-500 nike-card group hover:scale-105">
+              <div className="flex items-center">
+                <div className="p-3 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl transition-transform duration-300 group-hover:scale-110">
+                  <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Upcoming</p>
+                  <p className="text-3xl font-black text-gray-900">5</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="transition-all duration-500 nike-card group hover:scale-105">
+              <div className="flex items-center">
+                <div className="p-3 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl transition-transform duration-300 group-hover:scale-110">
+                  <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Groups</p>
+                  <p className="text-3xl font-black text-gray-900">8</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="transition-all duration-500 nike-card group hover:scale-105">
+              <div className="flex items-center">
+                <div className="p-3 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl transition-transform duration-300 group-hover:scale-110">
+                  <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Active Polls</p>
+                  <p className="text-3xl font-black text-gray-900">3</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="mb-12">
+            <div className="mb-8 text-center">
+              <h3 className="mb-4 text-3xl font-black text-gray-900">
+                Quick
+                <span className="block gradient-text">Actions</span>
+              </h3>
+              <p className="mx-auto max-w-2xl text-xl text-gray-600">
+                Jump straight into your favorite features and start planning together.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-6 md:grid-cols-5">
+              <Link href="/dashboard/calendar" className="text-center transition-all duration-500 nike-card group hover:scale-105">
+                <div className="mb-4 text-4xl transition-transform duration-300 group-hover:scale-110">📅</div>
+                <p className="mb-2 text-lg font-bold text-gray-900">Calendar Sync</p>
+                <p className="text-sm text-gray-600">Sync with Google & Apple</p>
+              </Link>
+              <Link href="/dashboard/polls" className="text-center transition-all duration-500 nike-card group hover:scale-105">
+                <div className="mb-4 text-4xl transition-transform duration-300 group-hover:scale-110">📊</div>
+                <p className="mb-2 text-lg font-bold text-gray-900">Group Polls</p>
+                <p className="text-sm text-gray-600">Vote on activities</p>
+              </Link>
+              <Link href="/dashboard/expenses" className="text-center transition-all duration-500 nike-card group hover:scale-105">
+                <div className="mb-4 text-4xl transition-transform duration-300 group-hover:scale-110">💸</div>
+                <p className="mb-2 text-lg font-bold text-gray-900">Split Bills</p>
+                <p className="text-sm text-gray-600">Track expenses</p>
+              </Link>
+              <Link href="/dashboard/location" className="text-center transition-all duration-500 nike-card group hover:scale-105">
+                <div className="mb-4 text-4xl transition-transform duration-300 group-hover:scale-110">📍</div>
+                <p className="mb-2 text-lg font-bold text-gray-900">Location Alerts</p>
+                <p className="text-sm text-gray-600">Ping friends nearby</p>
+              </Link>
+              <Link href="/dashboard/availability" className="text-center transition-all duration-500 nike-card group hover:scale-105">
+                <div className="mb-4 text-4xl transition-transform duration-300 group-hover:scale-110">👥</div>
+                <p className="mb-2 text-lg font-bold text-gray-900">Who's In?</p>
+                <p className="text-sm text-gray-600">Check availability</p>
+              </Link>
+            </div>
+          </div>
+
+          {/* Recent Activity */}
+          <div className="mb-12">
+            <div className="mb-8 text-center">
+              <h3 className="mb-4 text-3xl font-black text-gray-900">
+                Recent
+                <span className="block gradient-text">Activity</span>
+              </h3>
+              <p className="mx-auto max-w-2xl text-xl text-gray-600">
+                Stay updated with what's happening in your groups.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="transition-all duration-500 nike-card group hover:scale-105">
+                <div className="flex items-start space-x-4">
+                  <Avatar name="Sarah" size="md" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">Sarah joined Weekend Trip</p>
+                    <p className="text-sm text-gray-600">2 hours ago</p>
+                  </div>
+                </div>
+              </div>
+              <div className="transition-all duration-500 nike-card group hover:scale-105">
+                <div className="flex items-start space-x-4">
+                  <Avatar name="Mike" size="md" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">Mike voted for hiking</p>
+                    <p className="text-sm text-gray-600">4 hours ago</p>
+                  </div>
+                </div>
+              </div>
+              <div className="transition-all duration-500 nike-card group hover:scale-105">
+                <div className="flex items-start space-x-4">
+                  <Avatar name="Emma" size="md" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-900">Emma added expense</p>
+                    <p className="text-sm text-gray-600">6 hours ago</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Upcoming Events */}
+          <div>
+            <div className="mb-8 text-center">
+              <h3 className="mb-4 text-3xl font-black text-gray-900">
+                Upcoming
+                <span className="block gradient-text">Events</span>
+              </h3>
+              <p className="mx-auto max-w-2xl text-xl text-gray-600">
+                Your next adventures are just around the corner.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <div className="transition-all duration-500 nike-card group hover:scale-105">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <Badge variant="blue">This Weekend</Badge>
+                    <span className="text-sm text-gray-600">12 people</span>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">Weekend Adventure</h4>
+                  <p className="text-gray-600 mb-4">Hiking trip to the mountains with friends</p>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-sm text-gray-600">Confirmed</span>
+                  </div>
+                </div>
+              </div>
+              <div className="transition-all duration-500 nike-card group hover:scale-105">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <Badge variant="purple">Next Week</Badge>
+                    <span className="text-sm text-gray-600">8 people</span>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">Game Night</h4>
+                  <p className="text-gray-600 mb-4">Board games and pizza at John's place</p>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                    <span className="text-sm text-gray-600">Planning</span>
+                  </div>
+                </div>
+              </div>
+              <div className="transition-all duration-500 nike-card group hover:scale-105">
+                <div className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <Badge variant="green">In 2 weeks</Badge>
+                    <span className="text-sm text-gray-600">15 people</span>
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">Birthday Party</h4>
+                  <p className="text-gray-600 mb-4">Celebrating Emma's birthday at the park</p>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm text-gray-600">Voting</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    )
+  }
+
+  // If user is not logged in, show landing page
   const features = [
     {
       icon: "🎯",
@@ -148,6 +465,12 @@ export default function HomePage() {
                   </div>
                   <span>Watch Demo</span>
                 </button>
+                <button 
+                  onClick={() => setDemoMode(true)}
+                  className="group flex items-center justify-center space-x-3 border-2 border-green-300 text-green-700 hover:border-green-500 hover:text-green-600 font-semibold py-4 px-8 rounded-2xl text-lg transition-all duration-300 transform hover:scale-105"
+                >
+                  <span>🚀 Try Dashboard Demo</span>
+                </button>
               </div>
               
               <div className="flex items-center justify-center lg:justify-start space-x-8 pt-8">
@@ -209,21 +532,6 @@ export default function HomePage() {
                     <span className="text-sm font-semibold text-gray-700">Budget</span>
                     <span className="text-sm text-gray-600">$25/person</span>
                   </div>
-                </div>
-              </div>
-              
-              {/* Floating Elements */}
-              <div className="absolute -top-6 -right-6 bg-white rounded-2xl shadow-xl p-4 transform -rotate-6 hover:rotate-0 transition-all duration-300 hover:scale-110">
-                <div className="text-center">
-                  <div className="text-3xl mb-2 animate-bounce">🎉</div>
-                  <div className="text-xs font-bold text-gray-700">Event Created!</div>
-                </div>
-              </div>
-              
-              <div className="absolute -bottom-4 -left-4 bg-gradient-to-r from-green-400 to-green-500 text-white rounded-2xl shadow-xl p-3 transform rotate-6 hover:rotate-0 transition-all duration-300 hover:scale-110">
-                <div className="text-center">
-                  <div className="text-2xl mb-1">⚡</div>
-                  <div className="text-xs font-bold">Live Updates</div>
                 </div>
               </div>
             </div>
@@ -382,9 +690,12 @@ export default function HomePage() {
               <span className="relative z-10">Get Started Free</span>
               <div className="absolute inset-0 bg-gray-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             </Link>
-            <Link href="/dashboard" className="group border-2 border-white text-white hover:bg-white hover:text-blue-600 font-black py-5 px-10 rounded-2xl text-xl transition-all duration-300 transform hover:scale-105">
-              View Demo
-            </Link>
+            <button 
+              onClick={() => setDemoMode(true)}
+              className="group border-2 border-white text-white hover:bg-white hover:text-blue-600 font-black py-5 px-10 rounded-2xl text-xl transition-all duration-300 transform hover:scale-105"
+            >
+              Try Dashboard Demo
+            </button>
           </div>
           <p className="text-blue-100 text-lg">
             No credit card required • Free forever plan available
@@ -442,22 +753,16 @@ export default function HomePage() {
       </footer>
 
       {/* Video Modal */}
-      {isVideoPlaying && (
-        <Modal
-          isOpen={isVideoPlaying}
-          onClose={() => setIsVideoPlaying(false)}
-          title="LinkUp Demo"
-          size="lg"
-        >
-          <div className="bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl h-96 flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-6xl mb-6 animate-pulse">🎥</div>
-              <p className="text-gray-600 text-lg">Demo video would play here</p>
-              <p className="text-gray-500 text-sm mt-2">Experience the full LinkUp journey</p>
+      <Modal isOpen={isVideoPlaying} onClose={() => setIsVideoPlaying(false)}>
+        <div className="bg-white rounded-2xl p-8 max-w-4xl mx-auto">
+          <div className="aspect-video bg-gray-900 rounded-xl flex items-center justify-center">
+            <div className="text-white text-center">
+              <div className="text-6xl mb-4">🎬</div>
+              <p className="text-xl">Demo video would play here</p>
             </div>
           </div>
-        </Modal>
-      )}
+        </div>
+      </Modal>
     </div>
   )
 } 
