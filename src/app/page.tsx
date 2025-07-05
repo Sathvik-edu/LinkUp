@@ -670,7 +670,7 @@ export default function HomePage() {
       </section>
 
       {/* Interactive CTA Section */}
-      <section className="py-24 gradient-bg-primary relative overflow-hidden">
+      <section id="pricing" className="py-24 gradient-bg-primary relative overflow-hidden">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute top-0 left-0 w-full h-full">
           <div className="absolute top-20 left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
