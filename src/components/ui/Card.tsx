@@ -13,15 +13,15 @@ export const Card: React.FC<CardProps> = ({
   ...props
 }) => {
   const variants = {
-    default: 'bg-white rounded-2xl shadow-soft border border-neutral-200 hover:shadow-medium transition-all duration-300',
-    elevated: 'bg-white rounded-2xl shadow-medium border border-neutral-200 hover:shadow-strong transition-all duration-300',
-    outlined: 'bg-white rounded-2xl border-2 border-neutral-200 hover:border-neutral-300 transition-all duration-300'
+    default: 'bg-white rounded-lg sm:rounded-xl md:rounded-2xl shadow-soft border border-neutral-200 hover:shadow-medium transition-all duration-300',
+    elevated: 'bg-white rounded-lg sm:rounded-xl md:rounded-2xl shadow-medium border border-neutral-200 hover:shadow-strong transition-all duration-300',
+    outlined: 'bg-white rounded-lg sm:rounded-xl md:rounded-2xl border-2 border-neutral-200 hover:border-neutral-300 transition-all duration-300'
   }
   
   return (
     <div
       className={cn(
-        'p-6',
+        'p-4 sm:p-6 md:p-8',
         variants[variant],
         className
       )}
@@ -43,7 +43,7 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
 }) => {
   return (
     <div
-      className={cn('flex flex-col space-y-1.5 pb-4', className)}
+      className={cn('flex flex-col space-y-1.5 pb-3 sm:pb-4 md:pb-6', className)}
       {...props}
     >
       {children}
@@ -62,7 +62,7 @@ export const CardTitle: React.FC<CardTitleProps> = ({
 }) => {
   return (
     <h3
-      className={cn('text-xl font-semibold text-neutral-900', className)}
+      className={cn('text-lg sm:text-xl md:text-2xl font-semibold text-neutral-900 leading-tight', className)}
       {...props}
     >
       {children}
@@ -81,7 +81,7 @@ export const CardDescription: React.FC<CardDescriptionProps> = ({
 }) => {
   return (
     <p
-      className={cn('text-sm text-neutral-600', className)}
+      className={cn('text-sm sm:text-base md:text-lg text-neutral-600 leading-relaxed', className)}
       {...props}
     >
       {children}
@@ -119,7 +119,7 @@ export const CardFooter: React.FC<CardFooterProps> = ({
 }) => {
   return (
     <div
-      className={cn('flex items-center pt-4', className)}
+      className={cn('flex flex-col sm:flex-row items-start sm:items-center pt-3 sm:pt-4 md:pt-6 gap-3 sm:gap-4', className)}
       {...props}
     >
       {children}

@@ -288,7 +288,7 @@ export default function ExpensesDashboardPage() {
 
         {/* Expense Split Component - Lazy Loaded */}
         <Suspense fallback={
-          <AnimatedSection className="text-center py-12" direction="up" delay={0.8}>
+          <AnimatedSection className="text-center py-12" direction="up" delay={0.3}>
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
             <p className="text-gray-600">Loading expense management...</p>
           </AnimatedSection>
@@ -297,7 +297,7 @@ export default function ExpensesDashboardPage() {
         </Suspense>
 
         {/* Recent Transactions - Loads Immediately After Expense Split */}
-        <AnimatedSection className="mt-12" direction="up" delay={1.0}>
+        <AnimatedSection className="mt-12" direction="up" delay={0.3}>
           <div className="mb-8 text-center">
             <h3 className="mb-4 text-3xl font-black text-gray-900">
               Recent
