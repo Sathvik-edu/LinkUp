@@ -2,17 +2,36 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useUser, SignOutButton } from '@clerk/nextjs'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
 import { Modal } from '@/components/ui/Modal'
+import { AnimatedSection, AnimatedCard, AnimatedText, ParallaxSection, FloatingElement } from '@/components/ui/AnimatedSection'
 import CalendarSync from '@/components/features/CalendarSync'
 
 export default function CalendarDashboardPage() {
+  const { user, isLoaded } = useUser()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+
+  // Show loading state while checking authentication
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  // Handle case where user data is not available
+  const userName = user?.fullName || user?.emailAddresses?.[0]?.emailAddress || "Demo User"
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress || "Demo User"
+  
+  // Extract first name from user name
+  const firstName = userName.split(' ')[0] || 'Demo'
 
   return (
     <div className="overflow-hidden relative min-h-screen gradient-bg-secondary">
@@ -70,8 +89,13 @@ export default function CalendarDashboardPage() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Avatar name="John Doe" size="md" />
-              <span className="text-sm font-medium text-gray-700">John Doe</span>
+              <Avatar name={userName} size="md" />
+              <span className="text-sm font-medium text-gray-700">{userEmail}</span>
+              <SignOutButton>
+                <button className="text-sm text-gray-500 hover:text-gray-700 transition-colors px-3 py-1 rounded-lg hover:bg-gray-100">
+                  Sign Out
+                </button>
+              </SignOutButton>
             </div>
           </div>
         </div>
@@ -87,34 +111,35 @@ export default function CalendarDashboardPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32">
+      <AnimatedSection className="relative py-20 lg:py-32" direction="up" delay={0.2}>
         <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="space-y-8 text-center">
-            <div className="inline-flex items-center px-6 py-3 mb-8 text-sm font-medium text-blue-700 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-full animate-pulse">
+            <FloatingElement className="inline-flex items-center px-6 py-3 mb-8 text-sm font-medium text-blue-700 bg-gradient-to-r from-blue-100 to-cyan-100 rounded-full animate-pulse">
               <span className="mr-3 w-3 h-3 bg-blue-500 rounded-full animate-ping"></span>
               Calendar Sync Dashboard
-            </div>
+            </FloatingElement>
             
-            <h1 className="text-5xl font-black leading-tight text-gray-900 md:text-7xl">
-              Calendar
-              <span className="block animate-pulse gradient-text">
-                Command Center
-              </span>
-            </h1>
+            <AnimatedText 
+              className="text-5xl font-black leading-tight text-gray-900 md:text-7xl"
+              delay={0.4}
+              stagger={0.1}
+            >
+              {`${firstName}'s Calendar Command Center`}
+            </AnimatedText>
             
-            <p className="mx-auto max-w-3xl text-xl leading-relaxed text-gray-600 md:text-2xl">
+            <AnimatedSection className="mx-auto max-w-3xl text-xl leading-relaxed text-gray-600 md:text-2xl" direction="up" delay={0.8}>
               Sync, manage, and coordinate all your events across platforms. Never miss a beat with real-time calendar synchronization.
-            </p>
+            </AnimatedSection>
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* Main Content */}
       <main className="relative z-10 px-4 pb-20 mx-auto max-w-7xl sm:px-6 lg:px-8">
 
         {/* Calendar Stats */}
-        <div className="grid grid-cols-1 gap-6 mb-12 md:grid-cols-4">
-          <div className="transition-all duration-500 nike-card group hover:scale-105">
+        <AnimatedSection className="grid grid-cols-1 gap-6 mb-12 md:grid-cols-4" direction="up" delay={0.2}>
+          <AnimatedCard className="transition-all duration-500 nike-card group hover:scale-105" delay={0.1}>
             <div className="flex items-center">
               <div className="p-3 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl transition-transform duration-300 group-hover:scale-110">
                 <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,9 +151,9 @@ export default function CalendarDashboardPage() {
                 <p className="text-3xl font-black text-gray-900">24</p>
               </div>
             </div>
-          </div>
+          </AnimatedCard>
 
-          <div className="transition-all duration-500 nike-card group hover:scale-105">
+          <AnimatedCard className="transition-all duration-500 nike-card group hover:scale-105" delay={0.2}>
             <div className="flex items-center">
               <div className="p-3 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl transition-transform duration-300 group-hover:scale-110">
                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,9 +165,9 @@ export default function CalendarDashboardPage() {
                 <p className="text-3xl font-black text-gray-900">8</p>
               </div>
             </div>
-          </div>
+          </AnimatedCard>
 
-          <div className="transition-all duration-500 nike-card group hover:scale-105">
+          <AnimatedCard className="transition-all duration-500 nike-card group hover:scale-105" delay={0.3}>
             <div className="flex items-center">
               <div className="p-3 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl transition-transform duration-300 group-hover:scale-110">
                 <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,9 +179,9 @@ export default function CalendarDashboardPage() {
                 <p className="text-3xl font-black text-gray-900">3</p>
               </div>
             </div>
-          </div>
+          </AnimatedCard>
 
-          <div className="transition-all duration-500 nike-card group hover:scale-105">
+          <AnimatedCard className="transition-all duration-500 nike-card group hover:scale-105" delay={0.4}>
             <div className="flex items-center">
               <div className="p-3 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl transition-transform duration-300 group-hover:scale-110">
                 <svg className="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,11 +193,11 @@ export default function CalendarDashboardPage() {
                 <p className="text-3xl font-black text-gray-900">2</p>
               </div>
             </div>
-          </div>
-        </div>
+          </AnimatedCard>
+        </AnimatedSection>
 
         {/* Quick Actions */}
-        <div className="mb-12">
+        <AnimatedSection className="mb-12" direction="up" delay={0.3}>
           <div className="mb-8 text-center">
             <h3 className="mb-4 text-3xl font-black text-gray-900">
               Calendar
@@ -183,26 +208,25 @@ export default function CalendarDashboardPage() {
             </p>
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="text-center transition-all duration-500 nike-card group hover:scale-105"
-            >
-              <div className="mb-4 text-4xl transition-transform duration-300 group-hover:scale-110">➕</div>
-              <p className="mb-2 text-lg font-bold text-gray-900">Create Event</p>
-              <p className="text-sm text-gray-600">Add new event to calendar</p>
-            </button>
-            <div className="text-center transition-all duration-500 nike-card group hover:scale-105">
+            <AnimatedCard className="text-center transition-all duration-500 nike-card group hover:scale-105" delay={0.1}>
+              <button onClick={() => setIsModalOpen(true)} className="w-full">
+                <div className="mb-4 text-4xl transition-transform duration-300 group-hover:scale-110">➕</div>
+                <p className="mb-2 text-lg font-bold text-gray-900">Create Event</p>
+                <p className="text-sm text-gray-600">Add new event to calendar</p>
+              </button>
+            </AnimatedCard>
+            <AnimatedCard className="text-center transition-all duration-500 nike-card group hover:scale-105" delay={0.2}>
               <div className="mb-4 text-4xl transition-transform duration-300 group-hover:scale-110">🔄</div>
               <p className="mb-2 text-lg font-bold text-gray-900">Sync Now</p>
               <p className="text-sm text-gray-600">Force calendar sync</p>
-            </div>
-            <div className="text-center transition-all duration-500 nike-card group hover:scale-105">
+            </AnimatedCard>
+            <AnimatedCard className="text-center transition-all duration-500 nike-card group hover:scale-105" delay={0.3}>
               <div className="mb-4 text-4xl transition-transform duration-300 group-hover:scale-110">⚙️</div>
               <p className="mb-2 text-lg font-bold text-gray-900">Settings</p>
               <p className="text-sm text-gray-600">Configure sync options</p>
-            </div>
+            </AnimatedCard>
           </div>
-        </div>
+        </AnimatedSection>
 
         {/* Search */}
         <div className="mb-12">

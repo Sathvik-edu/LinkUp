@@ -1,10 +1,10 @@
 'use client'
 
-import { SignUp } from '@clerk/nextjs'
+import { SignIn } from '@clerk/nextjs'
 import Link from 'next/link'
 import { AnimatedSection, AnimatedText, FloatingElement } from '@/components/ui/AnimatedSection'
 
-export default function SignUpPage() {
+export default function LoginPage() {
   return (
     <div className="overflow-hidden relative min-h-screen gradient-bg-secondary">
       {/* Background Elements */}
@@ -27,8 +27,8 @@ export default function SignUpPage() {
               </Link>
             </div>
             <div className="flex items-center space-x-4">
-              <Link href="/auth/login" className="text-gray-600 hover:text-gray-900 transition-colors">
-                Already have an account? Sign in
+              <Link href="/auth/signup" className="text-gray-600 hover:text-gray-900 transition-colors">
+                Don't have an account? Sign up
               </Link>
             </div>
           </div>
@@ -39,9 +39,9 @@ export default function SignUpPage() {
       <AnimatedSection className="relative py-20 lg:py-32" direction="up" delay={0.2}>
         <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="space-y-8 text-center">
-            <FloatingElement className="inline-flex items-center px-6 py-3 mb-8 text-sm font-medium text-purple-700 bg-gradient-to-r from-purple-100 to-blue-100 rounded-full animate-pulse">
-              <span className="mr-3 w-3 h-3 bg-purple-500 rounded-full animate-ping"></span>  
-              Join LinkUp
+            <FloatingElement className="inline-flex items-center px-6 py-3 mb-8 text-sm font-medium text-blue-700 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full animate-pulse">
+              <span className="mr-3 w-3 h-3 bg-blue-500 rounded-full animate-ping"></span>  
+              Welcome Back
             </FloatingElement>
             
             <AnimatedText 
@@ -49,30 +49,30 @@ export default function SignUpPage() {
               delay={0.4}
               stagger={0.1}
             >
-              {`Create Your Social Command Center`}
+              {`Sign In to Your Social Command Center`}
             </AnimatedText>
             
             <AnimatedSection className="mx-auto max-w-3xl text-xl leading-relaxed text-gray-600 md:text-2xl" direction="up" delay={0.8}>
-              Start coordinating with friends and never miss a social opportunity again.
+              Access your dashboard and coordinate with friends seamlessly.
             </AnimatedSection>
           </div>
         </div>
       </AnimatedSection>
 
-      {/* Sign Up Form */}
+      {/* Sign In Form */}
       <AnimatedSection className="relative z-10 px-4 pb-20 mx-auto max-w-md sm:px-6 lg:px-8" direction="up" delay={0.6}>
         <div className="w-full">
-          <SignUp 
+          <SignIn 
             appearance={{
               elements: {
                 rootBox: "mx-auto",
                 card: "shadow-2xl border-0 bg-white/80 backdrop-blur-md",
                 headerTitle: "text-2xl font-bold text-gray-900",
                 headerSubtitle: "text-gray-600",
-                formButtonPrimary: "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105",
-                formFieldInput: "border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent",
+                formButtonPrimary: "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105",
+                formFieldInput: "border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent",
                 formFieldLabel: "text-gray-700 font-medium",
-                footerActionLink: "text-purple-600 hover:text-purple-700 font-medium",
+                footerActionLink: "text-blue-600 hover:text-blue-700 font-medium",
                 dividerLine: "bg-gray-300",
                 dividerText: "text-gray-500",
                 socialButtonsBlockButton: "border border-gray-300 rounded-lg px-4 py-3 hover:bg-gray-50 transition-colors",
@@ -87,7 +87,7 @@ export default function SignUpPage() {
       {/* Footer */}
       <footer className="relative z-10 px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="text-center text-gray-500">
-          <p>Join thousands of users who are already coordinating better with LinkUp.</p>
+          <p>Ready to coordinate? Sign in to access your social command center.</p>
         </div>
       </footer>
     </div>

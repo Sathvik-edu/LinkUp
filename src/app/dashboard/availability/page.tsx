@@ -1,301 +1,278 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, lazy, Suspense } from 'react'
 import Link from 'next/link'
+import { useUser, SignOutButton } from '@clerk/nextjs'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
 import { Modal } from '@/components/ui/Modal'
-import AvailabilityStatus from '@/components/features/AvailabilityStatus'
+import { AnimatedSection, AnimatedCard, AnimatedText, ParallaxSection, FloatingElement } from '@/components/ui/AnimatedSection'
+
+// Lazy load the heavy AvailabilityStatus component
+const AvailabilityStatus = lazy(() => import('@/components/features/AvailabilityStatus'))
 
 export default function AvailabilityDashboardPage() {
+  const { user, isLoaded } = useUser()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
 
+  // Show loading state while checking authentication
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  // Handle case where user data is not available
+  const userName = user?.fullName || user?.emailAddresses?.[0]?.emailAddress || "Demo User"
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress || "Demo User"
+
   return (
-    <div className="min-h-screen gradient-bg-secondary relative overflow-hidden">
+    <div className="overflow-hidden relative min-h-screen gradient-bg-secondary">
       {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-indigo-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
-        <div className="absolute top-40 left-40 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+      <div className="overflow-hidden absolute inset-0">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-orange-400 rounded-full opacity-20 mix-blend-multiply filter blur-xl animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-red-400 rounded-full opacity-20 mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+        <div className="absolute top-40 left-40 w-80 h-80 bg-orange-300 rounded-full opacity-20 mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
       </div>
 
       {/* Navigation */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 transition-all duration-300">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="sticky top-0 z-50 border-b border-gray-200 backdrop-blur-md transition-all duration-300 bg-white/80">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <Link href="/" className="flex items-center space-x-2 group cursor-pointer">
-                <div className="w-8 h-8 gradient-bg-primary rounded-lg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
-                  <span className="text-white font-bold text-sm">L</span>
+              <Link href="/" className="flex items-center space-x-2 cursor-pointer group">
+                <div className="flex justify-center items-center w-8 h-8 rounded-lg transition-transform duration-300 transform gradient-bg-primary group-hover:scale-110">
+                  <span className="text-sm font-bold text-white">L</span>
                 </div>
                 <h1 className="text-xl font-bold gradient-text">LinkUp</h1>
               </Link>
             </div>
-            <div className="hidden md:flex items-center">
+            <div className="hidden items-center md:flex">
               <div className="flex items-center space-x-8">
-                <Link href="/" className="text-gray-600 hover:text-gray-900 transition-colors relative group">
+                <Link href="/" className="relative text-gray-600 transition-colors hover:text-gray-900 group">
                   Home
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
                 </Link>
               </div>
               
               {/* Separator */}
-              <div className="mx-6 h-6 w-px bg-gray-300"></div>
+              <div className="mx-6 w-px h-6 bg-gray-300"></div>
               
               <div className="flex items-center space-x-8">
-                <Link href="/dashboard/calendar" className="text-gray-600 hover:text-gray-900 transition-colors relative group">
+                <Link href="/dashboard/calendar" className="relative text-gray-600 transition-colors hover:text-gray-900 group">
                   Calendar
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
                 </Link>
-                <Link href="/dashboard/polls" className="text-gray-600 hover:text-gray-900 transition-colors relative group">
+                <Link href="/dashboard/polls" className="relative text-gray-600 transition-colors hover:text-gray-900 group">
                   Polls
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
                 </Link>
-                <Link href="/dashboard/expenses" className="text-gray-600 hover:text-gray-900 transition-colors relative group">
+                <Link href="/dashboard/expenses" className="relative text-gray-600 transition-colors hover:text-gray-900 group">
                   Expenses
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
                 </Link>
-                <Link href="/dashboard/location" className="text-gray-600 hover:text-gray-900 transition-colors relative group">
+                <Link href="/dashboard/location" className="relative text-gray-600 transition-colors hover:text-gray-900 group">
                   Location
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 group-hover:w-full transition-all duration-300"></span>
                 </Link>
-                <Link href="/dashboard/availability" className="text-indigo-600 font-medium transition-colors relative group">
+                <Link href="/dashboard/availability" className="relative text-orange-600 font-medium transition-colors group">
                   Availability
-                  <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-indigo-600 transition-all duration-300"></span>
+                  <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-orange-600 transition-all duration-300"></span>
                 </Link>
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Avatar name="John Doe" size="md" />
-              <span className="text-sm font-medium text-gray-700">John Doe</span>
+              <Avatar name={userName} size="md" />
+              <span className="text-sm font-medium text-gray-700">{userEmail}</span>
+              <SignOutButton>
+                <button className="text-sm text-gray-500 hover:text-gray-700 transition-colors px-3 py-1 rounded-lg hover:bg-gray-100">
+                  Sign Out
+                </button>
+              </SignOutButton>
             </div>
           </div>
         </div>
       </nav>
 
       {/* Breadcrumb Navigation */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 pt-8">
+      <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 pt-8">
         <nav className="flex items-center space-x-2 text-sm text-gray-600 mb-8">
-          <Link href="/" className="hover:text-indigo-600 transition-colors">Home</Link>
+          <Link href="/" className="hover:text-orange-600 transition-colors">Home</Link>
           <span>/</span>
-          <span className="text-indigo-600 font-medium">Who's In?</span>
+          <span className="text-orange-600 font-medium">Availability Status</span>
         </nav>
       </div>
 
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center space-y-8">
-            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 rounded-full text-sm font-medium mb-8 animate-pulse">
-              <span className="w-3 h-3 bg-indigo-500 rounded-full mr-3 animate-ping"></span>
-              Who's In? Dashboard
-            </div>
+      <AnimatedSection className="relative py-20 lg:py-32" direction="up" delay={0.2}>
+        <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="space-y-8 text-center">
+            <FloatingElement className="inline-flex items-center px-6 py-3 mb-8 text-sm font-medium text-orange-700 bg-gradient-to-r from-orange-100 to-red-100 rounded-full animate-pulse">
+              <span className="mr-3 w-3 h-3 bg-orange-500 rounded-full animate-ping"></span>  
+              Availability Status Dashboard
+            </FloatingElement>
             
-            <h1 className="text-5xl md:text-7xl font-black text-gray-900 leading-tight">
-              Who's
-              <span className="block gradient-text animate-pulse">
-                In? Center
-              </span>
-            </h1>
+            <AnimatedText 
+              className="text-5xl font-black leading-tight text-gray-900 md:text-7xl"
+              delay={0.4}
+              stagger={0.1}
+            >
+              Who's In Command Center
+            </AnimatedText>
             
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Quick availability status for group members. See who's available at a glance and coordinate better.
-            </p>
+            <AnimatedSection className="mx-auto max-w-3xl text-xl leading-relaxed text-gray-600 md:text-2xl" direction="up" delay={0.8}>
+              See who's available, update your status, and coordinate meetups with real-time availability tracking.
+            </AnimatedSection>
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 relative z-10">
+      <main className="relative z-10 px-4 pb-20 mx-auto max-w-7xl sm:px-6 lg:px-8">
 
         {/* Availability Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <div className="nike-card group hover:scale-105 transition-all duration-500">
+        <AnimatedSection className="grid grid-cols-1 gap-6 mb-12 md:grid-cols-4" direction="up" delay={0.2}>
+          <AnimatedCard className="transition-all duration-500 nike-card group hover:scale-105" delay={0.1}>
             <div className="flex items-center">
-              <div className="p-3 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="p-3 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl transition-transform duration-300 group-hover:scale-110">
+                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Members</p>
-                <p className="text-3xl font-black text-gray-900">24</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="nike-card group hover:scale-105 transition-all duration-500">
-            <div className="flex items-center">
-              <div className="p-3 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Available</p>
-                <p className="text-3xl font-black text-gray-900">18</p>
+                <p className="text-3xl font-black text-gray-900">8</p>
               </div>
             </div>
-          </div>
+          </AnimatedCard>
 
-          <div className="nike-card group hover:scale-105 transition-all duration-500">
+          <AnimatedCard className="transition-all duration-500 nike-card group hover:scale-105" delay={0.2}>
             <div className="flex items-center">
-              <div className="p-3 bg-gradient-to-br from-red-100 to-red-200 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+              <div className="p-3 bg-gradient-to-br from-red-100 to-red-200 rounded-2xl transition-transform duration-300 group-hover:scale-110">
                 <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </div>
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Busy</p>
-                <p className="text-3xl font-black text-gray-900">4</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="nike-card group hover:scale-105 transition-all duration-500">
-            <div className="flex items-center">
-              <div className="p-3 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Maybe</p>
-                <p className="text-3xl font-black text-gray-900">2</p>
+                <p className="text-sm font-medium text-gray-600">Busy</p>
+                <p className="text-3xl font-black text-gray-900">5</p>
               </div>
             </div>
-          </div>
-        </div>
+          </AnimatedCard>
+
+          <AnimatedCard className="transition-all duration-500 nike-card group hover:scale-105" delay={0.3}>
+            <div className="flex items-center">
+              <div className="p-3 bg-gradient-to-br from-yellow-100 to-yellow-200 rounded-2xl transition-transform duration-300 group-hover:scale-110">
+                <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Maybe</p>
+                <p className="text-3xl font-black text-gray-900">3</p>
+              </div>
+            </div>
+          </AnimatedCard>
+
+          <AnimatedCard className="transition-all duration-500 nike-card group hover:scale-105" delay={0.4}>
+            <div className="flex items-center">
+              <div className="p-3 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl transition-transform duration-300 group-hover:scale-110">
+                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Online</p>
+                <p className="text-3xl font-black text-gray-900">12</p>
+              </div>
+            </div>
+          </AnimatedCard>
+        </AnimatedSection>
 
         {/* Quick Actions */}
-        <div className="mb-12">
-          <div className="text-center mb-8">
-            <h3 className="text-3xl font-black text-gray-900 mb-4">
+        <AnimatedSection className="mb-12" direction="up" delay={0.3}>
+          <div className="mb-8 text-center">
+            <h3 className="mb-4 text-3xl font-black text-gray-900">
               Availability
               <span className="block gradient-text">Actions</span>
             </h3>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Update your status and check group availability quickly.
+            <p className="mx-auto max-w-2xl text-xl text-gray-600">
+              Update your status, see who's free, and coordinate meetups with ease.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="nike-card group hover:scale-105 transition-all duration-500 text-center"
-            >
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">👤</div>
-              <p className="text-lg font-bold text-gray-900 mb-2">Update Status</p>
-              <p className="text-sm text-gray-600">Change availability</p>
-            </button>
-            <div className="nike-card group hover:scale-105 transition-all duration-500 text-center">
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">👥</div>
-              <p className="text-lg font-bold text-gray-900 mb-2">Group View</p>
-              <p className="text-sm text-gray-600">See all members</p>
-            </div>
-            <div className="nike-card group hover:scale-105 transition-all duration-500 text-center">
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📊</div>
-              <p className="text-lg font-bold text-gray-900 mb-2">Analytics</p>
-              <p className="text-sm text-gray-600">View patterns</p>
-            </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <AnimatedCard className="text-center transition-all duration-500 nike-card group hover:scale-105" delay={0.1}>
+              <button onClick={() => setIsModalOpen(true)} className="w-full">
+                <div className="mb-4 text-4xl transition-transform duration-300 group-hover:scale-110">📝</div>
+                <p className="mb-2 text-lg font-bold text-gray-900">Update Status</p>
+                <p className="text-sm text-gray-600">Set your availability</p>
+              </button>
+            </AnimatedCard>
+            <AnimatedCard className="text-center transition-all duration-500 nike-card group hover:scale-105" delay={0.2}>
+              <div className="mb-4 text-4xl transition-transform duration-300 group-hover:scale-110">👥</div>
+              <p className="mb-2 text-lg font-bold text-gray-900">Find Friends</p>
+              <p className="text-sm text-gray-600">See who's available</p>
+            </AnimatedCard>
+            <AnimatedCard className="text-center transition-all duration-500 nike-card group hover:scale-105" delay={0.3}>
+              <div className="mb-4 text-4xl transition-transform duration-300 group-hover:scale-110">📅</div>
+              <p className="mb-2 text-lg font-bold text-gray-900">Plan Meetup</p>
+              <p className="text-sm text-gray-600">Coordinate with friends</p>
+            </AnimatedCard>
           </div>
-        </div>
+        </AnimatedSection>
 
-        {/* Search */}
-        <div className="mb-12">
-          <div className="relative max-w-2xl mx-auto">
-            <Input
-              placeholder="Search members, groups, or status..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 text-lg rounded-2xl border-2 border-gray-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-300"
-            />
-            <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        {/* Availability Status Component */}
-        <div>
-          <div className="text-center mb-8">
-            <h3 className="text-3xl font-black text-gray-900 mb-4">
-              Who's
-              <span className="block gradient-text">In?</span>
-            </h3>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Check real-time availability status of your group members and coordinate activities efficiently.
-            </p>
-          </div>
-          <div className="nike-card">
-            <AvailabilityStatus />
-          </div>
-        </div>
+        {/* Availability Status Component - Lazy Loaded */}
+        <Suspense fallback={
+          <AnimatedSection className="text-center py-12" direction="up" delay={0.8}>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading availability features...</p>
+          </AnimatedSection>
+        }>
+          <AvailabilityStatus />
+        </Suspense>
       </main>
 
       {/* Update Status Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title="Update Availability Status"
-        size="lg"
-      >
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Status</label>
-            <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-              <option>Available</option>
-              <option>Busy</option>
-              <option>Maybe</option>
-              <option>Away</option>
-              <option>Do Not Disturb</option>
-            </select>
-          </div>
-          <Input
-            label="Custom Message"
-            placeholder="Add a custom status message (optional)"
-          />
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Duration</label>
-            <select className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-              <option>Until I change it</option>
-              <option>1 hour</option>
-              <option>2 hours</option>
-              <option>4 hours</option>
-              <option>8 hours</option>
-              <option>24 hours</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-700">Visibility</label>
-            <div className="space-y-2">
-              <label className="flex items-center">
-                <input type="radio" name="visibility" className="mr-2" defaultChecked />
-                All Groups
-              </label>
-              <label className="flex items-center">
-                <input type="radio" name="visibility" className="mr-2" />
-                Specific Groups
-              </label>
-              <label className="flex items-center">
-                <input type="radio" name="visibility" className="mr-2" />
-                Private
-              </label>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <div className="p-6">
+          <h3 className="mb-4 text-lg font-semibold text-gray-900">Update Your Status</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                <option>Available</option>
+                <option>Busy</option>
+                <option>Maybe</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Message (Optional)</label>
+              <Input 
+                type="text" 
+                placeholder="e.g., Free for coffee!"
+                className="w-full"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Until (Optional)</label>
+              <Input 
+                type="time" 
+                className="w-full"
+              />
             </div>
           </div>
-          <div className="flex justify-end gap-3 pt-4">
-            <Button
-              variant="outline"
-              onClick={() => setIsModalOpen(false)}
-            >
+          <div className="flex justify-end space-x-3 mt-6">
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
               Cancel
             </Button>
-            <Button>
+            <Button onClick={() => setIsModalOpen(false)}>
               Update Status
             </Button>
           </div>

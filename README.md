@@ -1,6 +1,6 @@
 # LinkUp - The All-in-One Social Planner
 
-LinkUp is a modern, comprehensive social planning platform that brings all group coordination tools into one seamless application. Built with Next.js 14, Supabase, and TypeScript, it provides real-time calendar sync, group decision-making, expense management, and location-based features.
+LinkUp is a modern, comprehensive social planning platform that brings all group coordination tools into one seamless application. Built with Next.js 14, Clerk Authentication, and TypeScript, it provides real-time calendar sync, group decision-making, expense management, and location-based features.
 
 ## 🚀 Features
 
@@ -13,11 +13,11 @@ LinkUp is a modern, comprehensive social planning platform that brings all group
 - **Friend Management** - Build and manage your social network
 
 ### Technical Features
-- **Real-time Updates** - Live synchronization using Supabase Realtime
+- **Real-time Updates** - Live synchronization and updates
 - **Cross-platform** - Works on iPhone, Android, tablet, and desktop
 - **Offline Support** - View events and data when offline
 - **Push Notifications** - Location-based and event reminders
-- **Secure Authentication** - Supabase Auth with social login support
+- **Secure Authentication** - Clerk Auth with social login support
 
 ## 🛠 Tech Stack
 
@@ -31,12 +31,11 @@ LinkUp is a modern, comprehensive social planning platform that brings all group
 - **Zod** - Schema validation
 
 ### Backend
-- **Supabase** - Backend-as-a-Service
-  - PostgreSQL database
-  - Real-time subscriptions
-  - Authentication
-  - Row Level Security (RLS)
-  - Edge Functions
+- **Clerk** - Authentication and User Management
+  - Secure user authentication
+  - Social login providers
+  - User profiles and sessions
+  - Multi-factor authentication
 
 ### Mobile & Cross-platform
 - **React Native** (planned) - Mobile app development
@@ -55,7 +54,7 @@ Before you begin, ensure you have the following installed:
 - **Node.js** (v18 or higher)
 - **npm** or **yarn**
 - **Git**
-- **Supabase CLI** (optional, for local development)
+- **Clerk Account** (for authentication setup)
 
 ## 🚀 Quick Start
 
@@ -74,30 +73,26 @@ npm install
 yarn install
 ```
 
-### 3. Set Up Supabase
+### 3. Set Up Clerk Authentication
 
-1. Create a new project at [supabase.com](https://supabase.com)
-2. Go to Settings > API to get your project URL and anon key
+1. Create a new application at [clerk.com](https://clerk.com)
+2. Go to API Keys to get your publishable key and secret key
 3. Copy the environment variables:
 
 ```bash
 cp env.example .env.local
 ```
 
-4. Update `.env.local` with your Supabase credentials:
+4. Update `.env.local` with your Clerk credentials:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/auth/login
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/auth/signup
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 ```
-
-### 4. Set Up Database
-
-1. Go to your Supabase project dashboard
-2. Navigate to SQL Editor
-3. Copy and paste the contents of `supabase/schema.sql`
-4. Execute the SQL to create all tables, functions, and policies
 
 ### 5. Run the Development Server
 
@@ -134,10 +129,13 @@ The web app is configured as a Progressive Web App (PWA) for mobile-like experie
 Create a `.env.local` file in the root directory:
 
 ```env
-# Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key
+CLERK_SECRET_KEY=your_clerk_secret_key
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/auth/login
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/auth/signup
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
 
 # Google APIs
 NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
@@ -153,29 +151,29 @@ STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-## 📊 Database Schema
+## 📊 Data Structure
 
-The application uses the following main tables:
+The application is designed to work with the following data types:
 
-- **profiles** - User profiles and information
-- **events** - Event details and metadata
-- **event_participants** - RSVP and participation tracking
-- **polls** - Group decision-making polls
-- **poll_votes** - Individual poll responses
-- **expenses** - Expense tracking and splitting
-- **user_availability** - Real-time availability status
-- **friends** - Friend relationships and connections
-- **calendar_integrations** - Third-party calendar connections
+- **User Profiles** - User information and preferences
+- **Events** - Event details and metadata
+- **Event Participants** - RSVP and participation tracking
+- **Polls** - Group decision-making polls
+- **Poll Votes** - Individual poll responses
+- **Expenses** - Expense tracking and splitting
+- **User Availability** - Real-time availability status
+- **Friends** - Friend relationships and connections
+- **Calendar Integrations** - Third-party calendar connections
 
 ## 🔐 Authentication
 
-LinkUp uses Supabase Auth with the following features:
+LinkUp uses Clerk Authentication with the following features:
 
 - **Email/Password** authentication
-- **Google OAuth** integration
-- **Apple OAuth** (planned)
-- **Row Level Security (RLS)** for data protection
-- **Automatic profile creation** on signup
+- **Social OAuth** integration (Google, GitHub, etc.)
+- **Multi-factor authentication** (MFA)
+- **User management** and profiles
+- **Session management** and security
 
 ## 🎨 Design System
 

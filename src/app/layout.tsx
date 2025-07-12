@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { AuthProvider } from '@/components/providers/AuthProvider'
+import { ClerkProvider } from '@clerk/nextjs'
+import { ScrollProgress } from '@/components/ui/ScrollProgress'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -29,11 +30,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="smooth-scroll">
       <body className={inter.className}>
-        <AuthProvider>
+        <ScrollProgress />
+        <ClerkProvider>
           {children}
-        </AuthProvider>
+        </ClerkProvider>
       </body>
     </html>
   )

@@ -2,17 +2,36 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useUser, SignOutButton } from '@clerk/nextjs'
 import { Card } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Avatar } from '@/components/ui/Avatar'
 import { Badge } from '@/components/ui/Badge'
 import { Modal } from '@/components/ui/Modal'
+import { AnimatedSection, AnimatedCard, AnimatedText, ParallaxSection, FloatingElement } from '@/components/ui/AnimatedSection'
 import Polls from '@/components/features/Polls'
 
 export default function PollsDashboardPage() {
+  const { user, isLoaded } = useUser()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+
+  // Show loading state while checking authentication
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    )
+  }
+
+  // Handle case where user data is not available
+  const userName = user?.fullName || user?.emailAddresses?.[0]?.emailAddress || "Demo User"
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress || "Demo User"
+  
+  // Extract first name from user name
+  const firstName = userName.split(' ')[0] || 'Demo'
 
   return (
     <div className="min-h-screen gradient-bg-secondary relative overflow-hidden">
@@ -70,8 +89,13 @@ export default function PollsDashboardPage() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <Avatar name="John Doe" size="md" />
-              <span className="text-sm font-medium text-gray-700">John Doe</span>
+              <Avatar name={userName} size="md" />
+              <span className="text-sm font-medium text-gray-700">{userEmail}</span>
+              <SignOutButton>
+                <button className="text-sm text-gray-500 hover:text-gray-700 transition-colors px-3 py-1 rounded-lg hover:bg-gray-100">
+                  Sign Out
+                </button>
+              </SignOutButton>
             </div>
           </div>
         </div>
@@ -87,34 +111,35 @@ export default function PollsDashboardPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative py-20 lg:py-32">
+      <AnimatedSection className="relative py-20 lg:py-32" direction="up" delay={0.2}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center space-y-8">
-            <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-sm font-medium mb-8 animate-pulse">
+            <FloatingElement className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 rounded-full text-sm font-medium mb-8 animate-pulse">
               <span className="w-3 h-3 bg-purple-500 rounded-full mr-3 animate-ping"></span>
               Smart Polls Dashboard
-            </div>
+            </FloatingElement>
             
-            <h1 className="text-5xl md:text-7xl font-black text-gray-900 leading-tight">
-              Smart
-              <span className="block gradient-text animate-pulse">
-                Polls Center
-              </span>
-            </h1>
+            <AnimatedText 
+              className="text-5xl md:text-7xl font-black text-gray-900 leading-tight"
+              delay={0.4}
+              stagger={0.1}
+            >
+              {`${firstName}'s Smart Polls Center`}
+            </AnimatedText>
             
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <AnimatedSection className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed" direction="up" delay={0.8}>
               Create polls, gather votes, and make democratic decisions with instant results and analytics.
-            </p>
+            </AnimatedSection>
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 relative z-10">
 
         {/* Polls Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-          <div className="nike-card group hover:scale-105 transition-all duration-500">
+        <AnimatedSection className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12" direction="up" delay={0.2}>
+          <AnimatedCard className="nike-card group hover:scale-105 transition-all duration-500" delay={0.1}>
             <div className="flex items-center">
               <div className="p-3 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                 <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,9 +151,9 @@ export default function PollsDashboardPage() {
                 <p className="text-3xl font-black text-gray-900">7</p>
               </div>
             </div>
-          </div>
+          </AnimatedCard>
 
-          <div className="nike-card group hover:scale-105 transition-all duration-500">
+          <AnimatedCard className="nike-card group hover:scale-105 transition-all duration-500" delay={0.2}>
             <div className="flex items-center">
               <div className="p-3 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                 <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -140,9 +165,9 @@ export default function PollsDashboardPage() {
                 <p className="text-3xl font-black text-gray-900">12</p>
               </div>
             </div>
-          </div>
+          </AnimatedCard>
 
-          <div className="nike-card group hover:scale-105 transition-all duration-500">
+          <AnimatedCard className="nike-card group hover:scale-105 transition-all duration-500" delay={0.3}>
             <div className="flex items-center">
               <div className="p-3 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                 <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,9 +179,9 @@ export default function PollsDashboardPage() {
                 <p className="text-3xl font-black text-gray-900">156</p>
               </div>
             </div>
-          </div>
+          </AnimatedCard>
 
-          <div className="nike-card group hover:scale-105 transition-all duration-500">
+          <AnimatedCard className="nike-card group hover:scale-105 transition-all duration-500" delay={0.4}>
             <div className="flex items-center">
               <div className="p-3 bg-gradient-to-br from-pink-100 to-pink-200 rounded-2xl group-hover:scale-110 transition-transform duration-300">
                 <svg className="w-8 h-8 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,11 +193,11 @@ export default function PollsDashboardPage() {
                 <p className="text-3xl font-black text-gray-900">89%</p>
               </div>
             </div>
-          </div>
-        </div>
+          </AnimatedCard>
+        </AnimatedSection>
 
         {/* Quick Actions */}
-        <div className="mb-12">
+        <AnimatedSection className="mb-12" direction="up" delay={0.3}>
           <div className="text-center mb-8">
             <h3 className="text-3xl font-black text-gray-900 mb-4">
               Poll
@@ -183,26 +208,25 @@ export default function PollsDashboardPage() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="nike-card group hover:scale-105 transition-all duration-500 text-center"
-            >
-              <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">➕</div>
-              <p className="text-lg font-bold text-gray-900 mb-2">Create Poll</p>
-              <p className="text-sm text-gray-600">Start a new poll</p>
-            </button>
-            <div className="nike-card group hover:scale-105 transition-all duration-500 text-center">
+            <AnimatedCard className="nike-card group hover:scale-105 transition-all duration-500 text-center" delay={0.1}>
+              <button onClick={() => setIsModalOpen(true)} className="w-full">
+                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">➕</div>
+                <p className="text-lg font-bold text-gray-900 mb-2">Create Poll</p>
+                <p className="text-sm text-gray-600">Start a new poll</p>
+              </button>
+            </AnimatedCard>
+            <AnimatedCard className="nike-card group hover:scale-105 transition-all duration-500 text-center" delay={0.2}>
               <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📊</div>
               <p className="text-lg font-bold text-gray-900 mb-2">Analytics</p>
               <p className="text-sm text-gray-600">View poll insights</p>
-            </div>
-            <div className="nike-card group hover:scale-105 transition-all duration-500 text-center">
+            </AnimatedCard>
+            <AnimatedCard className="nike-card group hover:scale-105 transition-all duration-500 text-center" delay={0.3}>
               <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📋</div>
               <p className="text-lg font-bold text-gray-900 mb-2">Templates</p>
               <p className="text-sm text-gray-600">Use poll templates</p>
-            </div>
+            </AnimatedCard>
           </div>
-        </div>
+        </AnimatedSection>
 
         {/* Search */}
         <div className="mb-12">
